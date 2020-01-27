@@ -1,6 +1,5 @@
-import cv2, imutils
+import cv2
 import numpy as np
-from guava_utils import GuavaUtils
 
 class BlobDetector:
     def __init__(self):
@@ -10,7 +9,7 @@ class BlobDetector:
         params = cv2.SimpleBlobDetector_Params()
 
         params.filterByColor = True
-        params.blobColor = 255
+        params.blobColor = 0
 
         params.filterByInertia = True
         params.minInertiaRatio = 0.45
@@ -26,5 +25,4 @@ class BlobDetector:
             np.array([]), (0,0,255),
             cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS
         )
-        cv2.imshow('Keypoint on Image', img_with_keypoints)
-
+        return img_with_keypoints

@@ -1,28 +1,55 @@
-import cv2
+import cv2, imutils
 import numpy as np
+
 from guava_blob import BlobDetector
 from guava_utils import GuavaUtils
+from guava_tweaker import GuavaTweaker
+from die_detector import DieDetector
 
 def main():
     cap = cv2.VideoCapture(0)
+
     bd = BlobDetector()
     utils = GuavaUtils()
+    dd = DieDetector()
+
+    DEBUG = True
+    WINDOW_NAME = 'image'
+
+    cv2.namedWindow(WINDOW_NAME)
+
+    tweaker = None
+    if DEBUG:
+        tweaker = GuavaTweaker(window_name=WINDOW_NAME)
+        tweaker.debug()
 
     while(True):
-        # Capture frame-by-frame
         ret, frame = cap.read()
 
         viewable = utils.preprocess(frame)
-        img = utils.postprocess(viewable)
-        h, w = img.shape
+        masked_images = dd.iterate_colors(viewable)
 
-        keypoints = bd.count_die(img)
-        bd.display_keypoints(viewable, keypoints)
+        if DEBUG:
+            for i, threshold in enumerate(tweaker.threshold_names):
+                t = cv2.getTrackbarPos(threshold, WINDOW_NAME)
+                utils.thresholds[i] = t
+
+        postprocessed_images = masked_images
+
+        for i, image in enumerate(masked_images):
+            postprocessed_images[i] = utils.postprocess(image, i)
+
+        image = np.hstack(postprocessed_images)
+        image = imutils.resize(image, width=1600)
+
+        keypoints = bd.count_die(image)
+        img_with_keypoints = bd.display_keypoints(image, keypoints)
+
+        cv2.imshow(WINDOW_NAME, img_with_keypoints)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # When everything done, release the capture
     cap.release()
     cv2.destroyAllWindows()
 
