@@ -27,25 +27,34 @@ def main():
         ret, frame = cap.read()
 
         viewable = utils.preprocess(frame)
-        masked_images = dd.iterate_colors(viewable)
+        masked_images, counts = dd.iterate_colors(viewable)
 
         if DEBUG:
             for i, threshold in enumerate(tweaker.threshold_names):
                 t = cv2.getTrackbarPos(threshold, WINDOW_NAME)
                 utils.thresholds[i] = t
 
-        postprocessed_images = masked_images
+        preprocessed_images = []
+        postprocessed_images = []
 
         for i, image in enumerate(masked_images):
-            postprocessed_images[i] = utils.postprocess(image, i)
+            preprocessed_images.append(image)
+            postprocessed_images.append(utils.postprocess(image, i))
 
-        image = np.hstack(postprocessed_images)
-        image = imutils.resize(image, width=1600)
+        preimage = np.hstack(preprocessed_images)
+        postimage = np.hstack(postprocessed_images)
+
+        preimage = imutils.resize(preimage, width=1600)
+        postimage = imutils.resize(postimage, width=1600)
+
+        cv2.imshow("preimage", preimage)
+
+        image = postimage
 
         keypoints = bd.count_die(image)
         img_with_keypoints = bd.display_keypoints(image, keypoints)
 
-        cv2.imshow(WINDOW_NAME, img_with_keypoints)
+        utils.display_results(WINDOW_NAME, img_with_keypoints, str(counts))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
