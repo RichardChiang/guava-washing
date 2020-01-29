@@ -4,9 +4,9 @@ import numpy as np
 class GuavaUtils:
     def __init__(self):
         self.crop_ratio = 0.32
-        self.blur_kernel_size = (3,3)
+        self.blur_kernel_size = (7,7)
         self.resize_width = 1200
-        self.thresholds = [21, 0, 0, 0]
+        self.thresholds = [50, 0, 60, 0]
         self.color_space = "HSV"
 
     def resize_image(self, image):
@@ -43,8 +43,8 @@ class GuavaUtils:
 
     def postprocess(self, image, index):
         grayscaled = self.grayscale_image(image)
-        # blurred = self.blur_image(cropped)
         threshed = self.threshold_image(grayscaled, index)
+        # blurred = self.blur_image(grayscaled)
 
         return threshed
 

@@ -13,15 +13,16 @@ class HSVColors(GuavaColors):
         self.color_space = "HSV"
 
     def color_space_boundaries(self):
+
         boundaries =[
             # light blue:
-            ([82, 0, 70], [132, 180, 225]),
-            # dark blue:
-            ([107, 180, 70], [132, 255, 225]),
-            # red:
+            ([82, 0, 70], [115, 160, 225]),
+            # dark blue: bright include higher
+            ([107, 160, 70], [132, 255, 225]),
+            # red: GOOD
             ([0, 120, 70], [20, 255, 225]),
-            # green:
-            ([40, 120, 70], [82, 255, 225]),
+            # green: darker increase
+            ([40, 0, 70], [82, 255, 225]),
         ]
         return boundaries
 

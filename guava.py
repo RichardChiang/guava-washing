@@ -13,7 +13,7 @@ def main():
     utils = GuavaUtils()
     dd = DieDetector()
 
-    DEBUG = True
+    DEBUG = False
     WINDOW_NAME = 'image'
 
     cv2.namedWindow(WINDOW_NAME)
